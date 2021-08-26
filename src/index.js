@@ -1,17 +1,30 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+export default class SwapiService {
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+    _apiBase = 'https://swapi.dev/api';
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+async getResource(url) {
+    const res = await fetch(`${this._apiBase}${url}`);
+
+    if (!res.ok) {
+        throw new Error(`Could not detch ${url}` +
+        `, received ${res.status}`)
+    }
+
+    return await res.json();
+    }
+
+    async getAllPeople() {
+        const res = await this.getResource(`/people/`);
+        return res.results;
+    }
+
+    getPerson(id) {
+        return this.getResource(`/people/${id}/`);
+    }
+};
+
+const swapi = new SwapiService();
+
+swapi.getAllPeople().then((body) => {
+    console.log(body);
+})
